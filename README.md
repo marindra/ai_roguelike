@@ -1,3 +1,11 @@
+Hunger: freezer, sink, oven, stove.
+Comfort: chair, bed, armchair, bath.
+Social: phone, computer, mirror and ability to see friend from other home.
+Hygiene: sink, bath, shower, mirror.
+Fun: chess, library, phone, computer.
+Energy: coffeemaker, bed, armchair, energy-drink.
+Bladder: WC.
+
 Learning materials for the course "AI for videogames" based on simple roguelike mechanics.
 * w1 - FSM
 * w2 - Behaviour Trees + blackboard
