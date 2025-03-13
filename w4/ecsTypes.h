@@ -73,6 +73,13 @@ enum Actions
   EA_ATTACK = EA_MOVE_END,
   EA_HEAL_SELF,
   EA_PASS,
+  EA_INC_HUNGER,
+  EA_INC_COMFORT,
+  EA_INC_SOCIAL,
+  EA_INC_HYGIENE,
+  EA_INC_FUN,
+  EA_INC_ENERGY,
+  EA_INC_BLADDER,
   EA_NUM
 };
 
@@ -138,6 +145,12 @@ struct ActionLog
   size_t capacity = 5;
 };
 
+struct MousePos
+{
+  int x = 0;
+  int y = 0;
+};
+
 struct BackgroundTile {};
 
 struct DungeonData
@@ -165,3 +178,48 @@ struct DmapWeights
 };
 
 struct Hive {};
+
+struct NamedItem
+{
+  std::string name;
+};
+
+struct Hunger
+{
+  float value = 100.0f;
+};
+struct Comfort
+{
+  float value = 100.0f;
+};
+struct Social
+{
+  float value = 100.0f;
+};
+struct Hygiene
+{
+  float value = 100.0f;
+};
+struct Fun
+{
+  float value = 100.0f;
+};
+struct Energy
+{
+  float value = 100.0f;
+};
+struct Bladder
+{
+  float value = 100.0f;
+};
+
+struct CharacterID
+{
+  size_t id = 0;
+};
+
+struct StartPos
+{
+  int x = 0;
+  int y = 0;
+};

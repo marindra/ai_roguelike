@@ -9,11 +9,18 @@
 static void update_camera(Camera2D &cam, flecs::world &ecs)
 {
   static auto playerQuery = ecs.query<const Position, const IsPlayer>();
+  static auto mouseQuery = ecs.query<MousePos>();
 
   playerQuery.each([&](const Position &pos, const IsPlayer &)
   {
     cam.target.x += (pos.x * tile_size - cam.target.x) * 0.1f;
     cam.target.y += (pos.y * tile_size - cam.target.y) * 0.1f;
+
+    mouseQuery.each([&](MousePos &mpos)
+    {
+      mpos.x = pos.x + floor((GetMouseX() - cam.offset.x) / (tile_size * cam.zoom));
+      mpos.y = pos.y + floor((GetMouseY() - cam.offset.y) / (tile_size * cam.zoom));
+    });
   });
 }
 
@@ -32,15 +39,16 @@ int main(int /*argc*/, const char ** /*argv*/)
     SetWindowSize(width, height);
   }
 
+  int *roomsCoord = new int[6];
   flecs::world ecs;
   {
     constexpr size_t dungWidth = 50;
     constexpr size_t dungHeight = 50;
     char *tiles = new char[dungWidth * dungHeight];
-    gen_drunk_dungeon(tiles, dungWidth, dungHeight);
+    gen_dungeon(tiles, dungWidth, dungHeight, roomsCoord);
     init_dungeon(ecs, tiles, dungWidth, dungHeight);
   }
-  init_roguelike(ecs);
+  init_roguelike(ecs, roomsCoord);
 
   Camera2D camera = { {0, 0}, {0, 0}, 0.f, 1.f };
   camera.target = Vector2{ 0.f, 0.f };

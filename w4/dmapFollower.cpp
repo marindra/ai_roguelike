@@ -18,6 +18,7 @@ void process_dmap_followers(flecs::world &ecs)
   {
     processDmapFollowers.each([&](const Position &pos, Action &act, const DmapWeights &wt)
     {
+      bool needToAct = true;
       float moveWeights[EA_MOVE_END];
       for (size_t i = 0; i < EA_MOVE_END; ++i)
         moveWeights[i] = 0.f;
@@ -25,20 +26,28 @@ void process_dmap_followers(flecs::world &ecs)
       {
         ecs.entity(pair.first.c_str()).get([&](const DijkstraMapData &dmap)
         {
-          moveWeights[EA_NOP]         += get_dmap_at(dmap, dd, pos.x+0, pos.y+0, pair.second.mult, pair.second.pow);
-          moveWeights[EA_MOVE_LEFT]   += get_dmap_at(dmap, dd, pos.x-1, pos.y+0, pair.second.mult, pair.second.pow);
-          moveWeights[EA_MOVE_RIGHT]  += get_dmap_at(dmap, dd, pos.x+1, pos.y+0, pair.second.mult, pair.second.pow);
-          moveWeights[EA_MOVE_UP]     += get_dmap_at(dmap, dd, pos.x+0, pos.y-1, pair.second.mult, pair.second.pow);
-          moveWeights[EA_MOVE_DOWN]   += get_dmap_at(dmap, dd, pos.x+0, pos.y+1, pair.second.mult, pair.second.pow);
+          if (dmap.map[pos.y * dd.width + pos.x] == 1.0f)
+          {
+            needToAct = false;
+          } else {
+            moveWeights[EA_NOP]         += get_dmap_at(dmap, dd, pos.x+0, pos.y+0, pair.second.mult, pair.second.pow);
+            moveWeights[EA_MOVE_LEFT]   += get_dmap_at(dmap, dd, pos.x-1, pos.y+0, pair.second.mult, pair.second.pow);
+            moveWeights[EA_MOVE_RIGHT]  += get_dmap_at(dmap, dd, pos.x+1, pos.y+0, pair.second.mult, pair.second.pow);
+            moveWeights[EA_MOVE_UP]     += get_dmap_at(dmap, dd, pos.x+0, pos.y-1, pair.second.mult, pair.second.pow);
+            moveWeights[EA_MOVE_DOWN]   += get_dmap_at(dmap, dd, pos.x+0, pos.y+1, pair.second.mult, pair.second.pow);
+          }
         });
       }
-      float minWt = moveWeights[EA_NOP];
-      for (size_t i = 0; i < EA_MOVE_END; ++i)
-        if (moveWeights[i] < minWt)
-        {
-          minWt = moveWeights[i];
-          act.action = i;
-        }
+      if (needToAct)
+      {
+        float minWt = moveWeights[EA_NOP];
+        for (size_t i = 0; i < EA_MOVE_END; ++i)
+          if (moveWeights[i] < minWt)
+          {
+            minWt = moveWeights[i];
+            act.action = i;
+          }
+      } 
     });
   });
 }
